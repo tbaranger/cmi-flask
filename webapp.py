@@ -1,4 +1,4 @@
-import time
+import os
 from flask import *
 import random
 import math
@@ -12,7 +12,9 @@ app.secret_key = '8zertf6Yr56ZERT5z7412z1rth'
 random.seed()
 
 # Data files pour Les Misérables
-data = json.load(open('static/miserables.json'))
+root = os.path.realpath(os.path.dirname(__file__))
+json_path = os.path.join(root, "static/miserables", "miserables.json")
+data = json.load(open(json_path))
 characters = data["nodes"]
 links = data["links"]
 NumCharacters = len(characters)
@@ -24,7 +26,7 @@ def index():
     return render_template("index.html")
 
 ########## Section . Les Misérables ##########
-@app.route("/les_miserables/form")
+@app.route("/les_miserables_form")
 def hello():
     characters_list = []
     for i in characters:
@@ -40,7 +42,7 @@ def les_miserables():
     return render_template("les_miserables.html",title="Les Misérables | Les Personnages", miserables=True,
                            number=NumCharacters, characters_list=characters_list)
 
-@app.route("/les_miserables/list_relations")
+@app.route("/les_miserables_list_relations")
 def list_relations():
     name = request.args.get('name')
     relation = request.args.get('relation')
@@ -60,7 +62,7 @@ def list_relations():
     return render_template("list_relations.html", miserables=True,
                            title=name,name=name,relations=relations)
 
-@app.route("/les_miserables/form_resultat", methods=["POST"])
+@app.route("/les_miserables_form_resultat", methods=["POST"])
 def after_form():
     charA = request.form["personnage"]
     charB = request.form["relation"]
@@ -101,7 +103,7 @@ def recherche_dichotomique():
     return render_template("recherche_dichotomique.html", title="Recherche Dichotomique", dicho=True,
                            hasError=request.args.get('error'), top=session['max'], tentatives=session['max_attempts'])
 
-@app.route("/recherche_dichotomique/resultat", methods=["POST"])
+@app.route("/recherche_dichotomique_resultat", methods=["POST"])
 def recherche_dichotomique_resultat():
     try:
         value = int(request.form["valeur"])
@@ -272,8 +274,13 @@ def nb_failures_subdomains(results, n=0):
 
 
 # Data PIX
-path_position = "static/pix_data/data_pix_position.csv"
-path_certif = "static/pix_data/data_pix_certif.csv"
+
+#path_position = "static/pix_data/data_pix_position.csv"
+#path_certif = "static/pix_data/data_pix_certif.csv"
+
+path_position = os.path.join(root, "static/pix_data", "data_pix_position.csv")
+path_certif = os.path.join(root, "static/pix_data", "data_pix_certif.csv")
+
 pix_position = np.loadtxt(path_position, skiprows=1, delimiter=',')
 pix_certif = np.loadtxt(path_certif, skiprows=1, delimiter=',')
 
@@ -366,7 +373,7 @@ def analyse_globale():
                             subdomain_ids = pix_subdomain_ids,
                             statistiques = statistiques)
 
-@app.route('/pix/competences')
+@app.route('/pix_competences')
 def analyse_competences():
     id_subdomain = request.args.get('id', '0')
 
@@ -388,7 +395,7 @@ def analyse_competences():
         subdomain_name = pix_subdomain_names[int(id_subdomain)],
         colors = colorscale)
 
-@app.route('/pix/methodologie')
+@app.route('/pix_methodologie')
 def methodologie():
 	return render_template('methodologie.html', title='PIX | Méthodologie', pix=True)
 
