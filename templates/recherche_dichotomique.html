@@ -1,0 +1,55 @@
+{% extends "structure.html" %}
+
+		{% block content %}
+		<div id="top" class="container bg-light rounded" style="padding-top:10px; padding-bottom: 10px;
+        padding-left:20px; padding-right:20px; margin-top:70px; margin-bottom:20px">
+			<h2 class="text-center page-title">Recherche dichotomique<br />ou<br />"Le Juste Prix"</h2>
+			<p class="first-paragraph">Jouons à un autre jeu. Essayez de deviner quel
+				nombre entre <b>0</b> et <b>{{top}}</b> le serveur a choisi au hasard ! <b>Attention</b>, le nombre
+				d'essais est limité à <b>{{tentatives}}</b>*.</p>
+			<form style="margin-top:30px" method="POST" action="{{url_for('recherche_dichotomique_resultat')}}">
+				{% if hasError %}
+				<p class="text-danger"><strong>Valeur incorrecte. Rééssayez.</strong></p>
+				{% elif inferieur %}
+				<p class="d-flex text-warning"><img src="/static/images/arrow_dicho_up.png" alt="Flèche haut" width="24" height="24" /><strong> Votre nombre : {{valeur}}. Vous êtes en dessous.
+					{% if (2*reste > tentatives) %}Encore {{reste}} essais.{% else %}Attention ! Plus que {{reste}} essais !{% endif %}</strong>
+				<img src="/static/images/arrow_dicho_up.png" alt="Flèche haut" width="24" height="24" /></p>
+				{% elif superieur %}
+				<p class="d-flextext-primary"><img src="/static/images/arrow_dicho_down.png" alt="Flèche haut" width="24" height="24" /><strong> Votre nombre : {{valeur}}. Vous êtes au-dessus.
+					{% if (2*reste > tentatives) %}Encore {{reste}} essais.{% else %}Attention ! Plus que {{reste}} essais !{% endif %}</strong>
+				<img src="/static/images/arrow_dicho_down.png" alt="Flèche haut" width="24" height="24" /></p>
+				{% endif %}
+				<div class="row text-center">
+					<div class="col-lg-7 col-md-7 col-sm-7 col-xs-7 mb-1">
+						<input  type="text" name="valeur" placeholder="Choisissez un nombre entre 0 et {{top}}" class="form-control" label="Valeur" id="charA" required/>
+					</div>
+					<div class="d-flex col-lg-5 col-md-5 col-sm-5 col-xs-5 mb-1">
+						<button type="submit" class="btn btn-primary">Vérifier</button>
+					</div>
+				</div>
+			</form>
+			<hr>
+			<button class="btn btn-sm btn-warning mb-2" data-toggle="collapse" data-target="#recherche_dichotomique">
+                    Plus d'informations sur la Recherche Dichotomique*</button>
+            <div id="recherche_dichotomique" class="collapse in mt-2 mb-2">
+				<div class="border rounded text-justify bg-white p-3 mb-3">
+					<p class="text-small first-paragraph">La recherche dichotomique, ou recherche par dichotomie (en anglais&nbsp;: binary search), est un algorithme
+					de recherche pour trouver la position d'un élément dans un tableau trié.</p>
+					<p class="text-small first-paragraph">Le principe est le suivant : comparer l'élément avec la valeur de la case au milieu du tableau&nbsp;;
+					si les valeurs sont égales, la tâche est accomplie, sinon on recommence dans la moitié du tableau pertinente.</p>
+					<footer class="blockquote-footer">Article "Recherche dichotomique" sur <cite title="Source">Wikipédia</cite></footer>
+				</div>
+				<p>Voici un schéma qui permet de comprendre la recherche dichotomique :</p>
+				<div class="d-flex justify-content-center">
+                <figure class="figure text-center bg-white border rounded p-2">
+                    <img src="/static/images/binary_search.png" width="382" height="244" alt="Recherche dichotomique"
+                    class="figure-img">
+                    <figcaption class="figure-caption">Source <a href="https://fr.wikipedia.org/wiki/Recherche_dichotomique"
+						alt="Article Wikipédia sur la recherche dichotomique">Wikipédia</a></figcaption>
+                </figure>
+				</div>
+				<p>* : le nombre d'essai correspond au nombre maximum théorique d'étapes nécessaires pour trouver n'importe quel nombre entre
+					<b>0</b> et le maximum, ici <b>{{top}}</b>.</p>
+            </div>
+		</div>
+		{% endblock %}

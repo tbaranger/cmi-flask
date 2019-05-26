@@ -1,0 +1,39 @@
+{% extends "structure.html" %}
+
+		{% block content %}
+		<div id="top" class="container bg-light rounded" style="padding-top:10px; padding-bottom: 10px;
+        padding-left:20px; padding-right:20px; margin-top:70px; margin-bottom:20px">
+			<h2 class="text-center page-title">Formulaire super génial 2.0</h2>
+			<p class="first-paragraph">Jouons à un jeu. Entrez le nom d'un personnage du roman
+			<em>Les Misérables</em> dans le premier champ du formulaire ci-
+			dessous. Puis sélectionnez un autre personnage dans la liste
+			qui suit. Si ces personnages se rencontrent dans le roman, vous
+			gagnerez un cookie virtuel !</p>
+
+			<form style="margin-top:30px" method="POST" action="{{url_for('after_form')}}">
+				{% if hasError %}
+				<p class="text-danger"><strong>Personnage inexistant.</strong></p>
+				{% endif %}
+				<div class="row" style="text-align:center">
+					<div class="col-lg-5 col-md-5 col-sm-5 col-xs-6 mb-1">
+						<input  type="text" name="personnage" placeholder="Personnage" class="form-control" label="Nom du personnage" id="charA" required/>
+					</div>
+					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 mb-1">
+						<select name="relation" class="form-control" id="charB">
+							<option value=""></option>
+							{% for i in characters %}
+								<option value="{{i}}">{{i}}</option>
+							{% endfor %}
+						</select>
+					</div>
+					<div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+							<button type="submit" class="d-flex btn btn-primary">Soumettre</button>
+					</div>
+				</div>
+			</form>
+			<br /><p><font size="-1">Si vous êtes coincé, pas de panique ! Vous pouvez toujours jeter
+			un oeil à la <a href="{{url_for('les_miserables')}}">page dédiée</a>
+			aux personnages du roman. Vous pourrez revenir ici pour tester
+			votre mémoire.</font></p>
+		</div>
+		{% endblock %}

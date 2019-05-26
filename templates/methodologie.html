@@ -1,0 +1,322 @@
+{% extends "structure.html" %}
+
+		{% block content %}
+
+        <div id="top" class="container-fluid bg-light text-justify pt-2 mt-5 pb-3">
+			<button onclick="topFunction()" id="myBtn" title="Retour en haut"><img src="/static/images/up_arrow.png" alt="Flèche vers le haut" width="40"></button>
+			<div class="container pb-3">
+				<h1 class="text-center page-title display-4"> Analyse PIX | Méthodologie</h1>
+				<h4 class="text-left pt-4 pb-2">&nbsp;<b>Table des matières</b></h4>
+				<ul class="list-group">
+					<li class="list-group-item"><a class="text-dark" href="#traitement"><font size="+1"><b>I. Traitement des données</b></font></a>
+						<ul class="list-group">
+							<li class="list-group-item border-0"><a class="text-dark" href="#dataset">a. L'ensemble de données</a></li>
+							<li class="list-group-item border-0"><a class="text-dark" href="#format">b. Conversion en format CSV</a></li>
+							<li class="list-group-item border-0"><a class="text-dark" href="#import">c. Import en Python avec NumPy</a></li>
+						</ul>
+					</li>
+					<li class="list-group-item"><a class="text-dark" href="#analyse"><font size="+1"><b>II. Fonctions d'analyse</b></font></a>
+						<ul class="list-group">
+							<li class="list-group-item border-0"><a class="text-dark" href="#statistics">a. Fonctions mathématiques</a></li>
+							<li class="list-group-item border-0"><a class="text-dark" href="#data_analysis">b. Recherche d'informations</a></li>
+						</ul>
+					</li>
+					<li class="list-group-item"><a class="text-dark" href="#visualisations"><font size="+1"><b>III. Visualisations</b></font></a>
+						<ul class="list-group">
+							<li class="list-group-item border-0"><a class="text-dark" href="#histogram">a. Histogrammes</a></li>
+							<li class="list-group-item border-0"><a class="text-dark" href="#pie_chart">b. Diagrammes circulaires</a></li>
+							<li class="list-group-item border-0"><a class="text-dark" href="#box_plot">c. Diagrammes en boîte</a></li>
+						</ul>
+					</li>
+				</ul>
+				<hr class="mt-5">
+			</div>
+			<div class="container pb-3" id="traitement">
+				<h1 class="text-left">Traitement des données</h1>
+				<section id="dataset">
+					<h2 class="text-left">L'ensemble de données</h2>
+					<p>Les données utilisées dans cette analyse correspondent aux scores de positionnement et de certification d'environ 1500 étudiant(e)s de Licence 1 de l'Université de Bordeaux. Ces données sont téléchargeables <a href="{{url_for('pix_dataset')}}"><font size="+1"><b>ici</b></font></a>.</p>
+					<p>Les niveaux de certification n'étant ouverts que jusqu'au niveau <b>5</b> au moment où ces tests ont été passés, les niveaux obtenus se trouvent entre <b>0</b> et <b>5</b>. En réalité les feuilles de niveaux originales contiennent des niveaux <b>6</b> obtenus. En accord avec les directives qui nous ont été données, tous les <b>6</b> ont été ramenés à <b>5</b>.<br>
+					Les tirets "-" figurant dans la feuille de certification correspondent aux compétences pour lesquels l'étudiant(e) n'est pas parvenu à se certifier au niveau correspondant à celui de son positionnement, ni au niveau inférieur. Nous avons choisi de remplacer ces tirets par un score nul lors de nos calculs.</p>
+					<p>Ces deux modifications sont les seules actions entreprises <em>à priori</em> dans notre analyse. Elles correspondent à un <em>nettoyage</em> des données assez classique. On aurait d'ailleurs très bien pu choisir de conserver les tirets et de ne pas les traiter dans nos calculs numériques.</p>
+				</section>
+				<section id="format">	
+					<h2 class="text-left">Conversion en format CSV</h2>
+					<p>La dernière étape en ce qui concerne le traitement des données préalable à l'analyse numérique fut d'exporter les feuilles de format &laquo;&nbsp;tableur&nbsp;&raquo; en format CSV, plus adapté à l'analyse par un programme Python tiers.</p>
+					<p>À ce stade, nous disposons alors de deux fichiers textes au format CSV, que l'on importe ensuite à l'aide de la bibliothèque <a href="https://www.numpy.org/">NumPy</a> dans notre fichier Python.</p>
+					<div class="text-center">
+					<figure class="figure text-center">
+						<img src="/static/images/doc/01.png" alt="Fichier CSV" class="figure-img img-fluid border rounded"> 
+						<figcaption class="figure-caption">Fichier CSV des niveaux lors du Positionement</figcaption>
+					 </figure>
+					</div>
+				</section>
+				<section id="import">
+					<h2 class="text-left">Import en Python avec NumPy</h2>
+					<p>Afin de pouvoir manipuler les données contenus dans ces fichiers CSV, nous avons utilisé la bibliothèque NumPy. Nous disposons alors d'une matrice des niveaux obtenus lors du positionnement et d'une autre matrice pour la certification.</p>
+					<div class="text-center">
+					<figure class="figure text-center">
+						<img src="/static/images/doc/03.png" alt="Import NumPy" class="figure-img img-fluid border rounded"> 
+						<figcaption class="figure-caption">Import des données en Python avec NumPy</figcaption>
+					 </figure>
+					</div>
+					<p>Les matrices ainsi créées respectent le format du fichier CSV. C'est-à-dire que chaque entrée est une liste de 16 entiers, sur lesquels nous pouvons effectuer des calculs. Cependant, pour faciliter l'analyse numérique, qui se fera principalement par compétence c'est-à-dire verticalement sur le tableau précédent, et non pas par étudiant, il nous faut transposer ces matrices. La bibliothèque NumPy nous permet précisément d'effectuer ce genre d'actions sans effort.</p>
+					<div class="text-center">
+					<figure class="figure text-center">
+						<img src="/static/images/doc/04.png" alt="Transposition NumPy" class="figure-img img-fluid border rounded"> 
+						<figcaption class="figure-caption">Transposition de matrices avec NumPy</figcaption>
+					 </figure>
+					</div>
+					<p>Ceci conclut la partie <b>&laquo;&nbsp;Traitement des données&nbsp;&raquo;</b>.<br>
+					Nous allons maintenant nous pencher sur l'analyse numérique à proprement parler.
+				</section>
+			</div>
+			<div class="container" id="analyse">
+				<h1 class="text-left">Fonctions d'analyse </h1>
+				<p>L'objectif de cette section est de montrer le type de fonctions que nous avons utilisées afin d'analyser les données de façon efficace, en factorisant notre code au maximum. Cette liste est quasi-exhaustive et seules quelques fonctions annexes seront omises.</p>
+				<section id="statistics">
+					<h2 class="text-left pb-2" id="statistics">Fonctions mathématiques</h2>
+					<section>
+						<h3 class="text-left font-italic">Statistiques générales</h3>
+						<p>Une fonction importante et utilisée à plusieurs occasions consiste à générer un tableau de statistiques sur un ensemble de données correspondant à des résultats par compétence. Cela correspond aux matrices transposées mentionnées ci-dessus.</p>
+						<p>Par souci de clarté et aussi de façon à pouvoir accéder à l'intitulé de chaque statistique rapidement, nous avons initialisé une liste de statistiques pertinentes pour un tel ensemble de données.</p>
+						<div class="text-center">
+						<figure class="figure text-center">
+							<img src="/static/images/doc/05.png" alt="Liste de statistiques" class="figure-img img-fluid border rounded"> 
+							<figcaption class="figure-caption">Liste des statistiques utiles pour l'analyse PIX</figcaption>
+						 </figure>
+						</div>
+						<p class="note">L'élément &laquo;&nbsp;label&nbsp;&raquo; correspond à un intitulé des données sur lesquelles les statistiques ont été collectés, par exemple une compétence particulière.</p>
+						<p>Les statistiques sont quant à elles calculées à l'aide de la fonction suivante.</p>
+						<div class="text-center">
+						<figure class="figure text-center">
+							<img src="/static/images/doc/06.png" alt="Fonction statistique" class="figure-img img-fluid border rounded"> 
+							<figcaption class="figure-caption">Fonction qui génère un tableau de statistiques</figcaption>
+						 </figure>
+						</div>
+						<p>On voit que la fonction est conçue de façon à pouvoir générer soit un tableau purement numérique, soit un tableau contenant une première colonne de &laquo;&nbsp;labels&nbsp;&raquo;. Encore une fois, les calculs sont effectués à l'aide de la bibliothèque NumPy.</p>
+					</section>
+					<section>
+						<h3 class="text-left font-italic">Statistiques par domaine</h3>
+						<p>Afin de rendre la progression dans notre analyse la plus fluide et intuitive possible, nous avons décidé de présenter d'abord les statistiques générales en considérant les cinq grands domaines PIX, puis dans un second temps de s'intéresser au détail des compétences. Or l'ensemble de données de départ correspond bien sûr aux niveaux obtenus pour chacune des compétences.</p>
+						<p>Nous avons ainsi créer la fonction suivante, qui permet de générer un fichier CSV ayant le même format que les données initiales, mais pour les domaines.</p>
+						<div class="alert alert-info p-3 pb-1" role="alert">
+							<h5>Note</h5>
+							<p>Ces fichiers sont générés de manière dynamique. C'est-à-dire qu'au risque de ralentir légèrement le chargement de la page web d'analyse, il n'y a pas besoin d'effectuer trop de manipulations dans la phase de traitement de données. Tout est géré par le serveur.</p>
+						</div>
+						<div class="text-center">
+						<figure class="figure text-center">
+							<img src="/static/images/doc/07.png" alt="Des compétences aux domaines" class="figure-img img-fluid border rounded"> 
+							<figcaption class="figure-caption">Calcul des niveaux moyens des étudiants par domaine</figcaption>
+						 </figure>
+						</div>
+						<p>On remarque que pour faciliter un traitement similaire sur un autre ensemble de données, la fonction compare directement les numéros correspondant aux domaines dans les intitulés des compétences. Dans le cas hypothétique ou le nombre de compétences par domaines serait amené à changer, il suffirait de mettre à jour la liste des intitulés et le programme fonctionnerait toujours.</p>
+					</section>
+				</section>
+				<section id="analysis">
+					<h2 class="text-left" id="data_analysis">Recherche d'informations</h2>
+					<p>Nous présentons ici un ensemble de petites fonctions dont nous nous sommes servis dans notre recherche d'informations, comme par exemple de la fonction qui a permis de calculer le nombre d'étudiant(e)s ayant échoué un nombre particulier de compétences, ou encore la fonction qui nous a permis de calculer le nombre d'étudiant(e)s ayant répondu aux attentes en terme de niveau de certification. Ce sont ces fonctions qui nous ont permis de mieux comprendre l'ensemble de données et de choisir quelles visualisations favoriser dans <a href="{{url_for('analyse_globale')}}">notre analyse</a>.</p>
+					<section>
+						<h3 class="text-left font-italic">Nombre de compétences échouées</h3>
+						<p>Cette fonction a à voir avec l'analyse des résultats lors de la certification. Elle revient à compter pour un ou une étudiante le nombre des compétences qu'il ou elle a échoué.</p>
+						<div class="text-center">
+						<figure class="figure text-center">
+							<img src="/static/images/doc/08.png" alt="Nombre de compétences échouées" class="figure-img img-fluid border rounded"> 
+							<figcaption class="figure-caption">Calcul du nombre de compétences échouées pour un ou une étudiant(e)</figcaption>
+						 </figure>
+						</div>
+						<p>Cette fonction est indispensable pour la fonction suivante, qui permet une analyse plus poussée des résultats lors de la certification.</p>
+					</section>
+					<section>
+						<h3 class="text-left font-italic">Nombre d'étudiants ayant échoué 'n' compétences</h3>
+						<p>Cette fonction permet de compter les étudiants ayant raté un nombre précis de compétence.</p>
+						<div class="text-center">
+						<figure class="figure text-center">
+							<img src="/static/images/doc/09.png" alt="Nombre de compétences échouées" class="figure-img img-fluid border rounded"> 
+							<figcaption class="figure-caption">Calcul du nombre de compétences échouées pour un ou une étudiant(e)</figcaption>
+						 </figure>
+						</div>
+						<p>Cette fonction se repose sur la précédente, et est utilisée lors de la création de l'histogramme suivant.</p>
+						<div class="text-center">
+							<img src="/static/images/doc/10.png" alt="Nombre de compétences échouées" class="figure-img img-fluid border rounded">
+						</div>
+					</section>
+					<section>
+						<h3 class="text-left font-italic">Distribution des compétences échouées</h3>
+						<p>Cette fonction permet de répartir les échecs calculés précédemment selon les compétences. Notre idée était de pouvoir repérer les compétences qui posent problème aux étudiant(e)s autrement que par un simple coup d'oeil aux niveaux moyens obtenus.</p>
+						<p>Cette fonction se focalise sur les étudiants ayant raté un nombre 'n' de compétences passé en paramètre. Cela nous permet de montrer par exemple la répartition des compétences lorsque les étudiants ont échoué 3 compétences.</p>
+						<div class="text-center">
+						<figure class="figure text-center">
+							<img src="/static/images/doc/11.png" alt="Répartitions des compétences échouées" class="figure-img img-fluid border rounded"> 
+							<figcaption class="figure-caption">Répartition des compétences échouées</figcaption>
+						 </figure>
+						</div>
+						<p>Voici le type d'histogramme généré grâce à cette fonction, avec n = 3.</p>
+						<div class="text-center">
+							<img src="/static/images/doc/12.png" alt="Répartition des compétences échouées" class="figure-img img-fluid border rounded">
+						</div>
+					</section>
+					<section class="pb-4">
+						<h3 class="text-left font-italic">Validation du profil</h3>
+						<p>Deux fonctions interviennent pour calculer le nombre d'étudiants ayant validé le profil attendu par les enseignants. Une petite préparation est requise pour ce travail. Il s'agit de créer un tableau qui regroupe les niveaux attendu pour chaque compétence.</p>
+						<div class="text-center">
+						<figure class="figure text-center">
+							<img src="/static/images/doc/13.png" alt="Niveau attendu pour chaque compétence" class="figure-img img-fluid border rounded"> 
+							<figcaption class="figure-caption">Niveau attendu pour chaque compétence</figcaption>
+						 </figure>
+						</div>
+						<p>Tout d'abord, une fonction permet de compter le nombre de compétences que l'étudiant(e) a validé au moins au niveau attendu. Puis dans un second temps, compte le nombre d'étudiants s'étant certifié à un niveau supérieur ou égal aux attentes pour un certain nombre de compétences.</p>
+						<p>Voici ces fonctions.</p>
+						<div class="text-center">
+						<figure class="figure text-center">
+							<img src="/static/images/doc/14.png" alt="Nombre de compétences validées au niveau attendu" class="figure-img img-fluid border rounded"> 
+							<figcaption class="figure-caption">Calcul du nombre de compétences validées au moins au niveau attendu pour un ou une étudiante</figcaption>
+						 </figure>
+						</div>
+						<div class="text-center">
+						<figure class="figure text-center">
+							<img src="/static/images/doc/15.png" alt="Nombre d'étudiants ayant répondu aux attentes pour un certain nombre de compétences" class="figure-img img-fluid border rounded"> 
+							<figcaption class="figure-caption">Calcul du nombre d'étudiant(e)s ayant répondu aux attentes pour un certain nombre de compétence</figcaption>
+						 </figure>
+						</div>
+						<p>Ces fonctions sont utilisées pour générer par exemple l'histogramme suivant.</p>
+						<div class="text-center">
+							<img src="/static/images/doc/16.png" alt="Nombre d'étudiants ayant validé le profil attendu pour 'n' compétences class="figure-img img-fluid border rounded">
+						</div>
+					</section>
+					<p>Voilà qui conclut notre présentation des fonctions d'analyse PIX. Nous avons montré comment les données sont traitées, puis importées, et enfin comment nous les manipulons afin de produire notre analyse.</p>
+				</section>
+			</div>
+			<div class="container pb-3" id="visualisations">
+				<h1 class="text-left">Visualisations </h1>
+				<p>Dans cette section, nous allons présenter la façon dont sont générées les différentes visualisations figurant dans <a href="{{url_for('analyse_globale')}}">notre analyse</a> ainsi que dans les pages dédiées aux compétences. Nous avons utilisé trois types de visualisations&nbsp;: histogrammes, diagrammes circulaires, et diagrammes en boîte. Ces visualisations ont été créées en JavaScript à l'aide de la <a href="https://d3js.org">bibliothèque d3</a>, ce qui permet de les rendre interactif et par exemple d'afficher des informations supplémentaires au passage de la souris.</p>
+				<div class="alert alert-info p-3 pb-1" role="alert">
+					<h5>Note</h5>
+					<p>Ces visualisations sont générés de manière dynamique. C'est-à-dire que différents graphiques sont générés sur la base du même fichier JavaScript. Pour cela, nous avons utilisés les scripts comme des templates, en nous reposant sur le fonctionnement de la framework <a href="http://flask.pocoo.org">Flask</a> en Python. On ne commentera pas ici la templatisation et l'utilisation de <a href="http://jinja.pocoo.org">Jinja2</a>.</p>
+				</div>
+				<section id="histogram">
+					<h2 class="text-left">Histogrammes</h2>
+					<section>
+						<h3 class="text-left font-italic">Éléments statiques</h3>
+						<p>Pour cette première visualisation, nous allons voir en détail comment les différents éléments sont générés en JavaScripts. Par la suite, nous passerons rapidement sur les éléments basiques et nous noterons simplement les particularités de chaque visualisation lorsque cela sera pertinent.</p>
+						<p>Voici par exemple le type d'histogramme généré par le code JavaScript que nous allons regarder.</p>
+						<div class="text-center">
+							<figure class="figure text-center">
+								<img src="/static/images/doc/17.png" alt="Exemple d'histogramme" class="figure-img img-fluid border rounded"> 
+								<figcaption class="figure-caption">Exemple d'un histogramme</figcaption>
+							</figure>
+						</div>
+						<p>La première étape est bien entendu d'importer les données. Ici, nous nous reposons sur la méthode d'import de fichier CSV disponible grâce à la bibliothèque d3. Il s'ensuit un traitement sommaire des données afin de pouvoir y accéder facilement quand cela sera nécessaire lors de la création des différents éléments du graphique.</p>
+						<div class="text-center">
+							<figure class="figure text-center">
+								<img src="/static/images/doc/18.png" alt="Import CSV avec D3" class="figure-img img-fluid border rounded"> 
+								<figcaption class="figure-caption">Import de données CSV avec D3 et Jinja2</figcaption>
+							</figure>
+						</div>
+						<p>Il est ensuite nécessaire de préparer les axes de notre graphique, ce que nous faisons en mappant les numéros de domaines ou de compétences sur l'axe des abscisses, et en créant une échelle linéaire en ordonnées ayant comme maximum une valeur déterminée préalablement, en l'occurrence <b>6</b> étant donné que le niveau maximum est à <b>5</b>.</p>
+						<div class="text-center">
+							<figure class="figure text-center">
+								<img src="/static/images/doc/19.png" alt="Calculs des axes avec d3" class="figure-img img-fluid border rounded"> 
+								<figcaption class="figure-caption">Calcul des axes avec d3</figcaption>
+							</figure>
+						</div>
+						<p>Une fois ces préparations effectuées, nous pouvons générer notre histogramme. Cela s'effectue en deux étapes. Tout d'abord, nous devons générer une zone qui correspondra au graphique, puis nous ajoutons les barres une à une. Dans cet exemple, des élements supplémentaires sont ajoutés, tels que des effets visuels au passage de la souris, ou une coloration de la barre selon la valeur correspondante.</p>
+						<div class="text-center">
+							<figure class="figure text-center">
+								<img src="/static/images/doc/20.png" alt="Création d'une zone SVG" class="figure-img img-fluid border rounded"> 
+								<figcaption class="figure-caption">Création d'une zone SVG pour la visualisation</figcaption>
+							</figure>
+						</div>
+						<div class="text-center">
+							<figure class="figure text-center">
+								<img src="/static/images/doc/21.png" alt="Ajout des barres de l'histogramme" class="figure-img img-fluid border rounded"> 
+								<figcaption class="figure-caption">Ajout des barres de l'histogramme</figcaption>
+							</figure>
+						</div>
+					</section>
+					<section>
+						<h3 class="text-left font-italic">Éléments dynamiques</h3>
+						<p>Dans cette section, nous allons rapidement présenter les éléments dynamiques disponibles sur l'histogramme précédent, c'est-à-dire les éléments qui s'affichent au passage de la souris. Ce mécanisme nous permet d'ajouter des informations utiles qui encombreraient trop la visualisation si jamais nous les laissions toujours visibles.</p>
+						<p>Voici un exemple de tooltip généré avec d3 sur l'histogramme précédent.</p>
+						<div class="text-center">
+							<figure class="figure text-center">
+								<img src="/static/images/doc/22.png" alt="Tooltip D3" class="figure-img img-fluid border rounded"> 
+								<figcaption class="figure-caption">Illustration d'un tooltip D3</figcaption>
+							</figure>
+						</div>
+						<p>Une fonction est appelée lors du survol de la souris, permettant d'afficher la ligne rouge en pointillés. Voici le bloc de code permettant de la générer.</p>
+						<div class="text-center">
+							<figure class="figure text-center">
+								<img src="/static/images/doc/23.png" alt="Ligne de niveau" class="figure-img img-fluid border rounded"> 
+								<figcaption class="figure-caption">Ajout d'une ligne de niveau</figcaption>
+							</figure>
+						</div>
+						<p>Les tooltips sont générés grâce à une méthode intégrée à la bibliothèque d3, de la manière suivante. La mise en forme est géré par l'ajout d'une classe et d'une feuille CSS dédiée aux visualisations, puis le contenu du tooltip est généré à l'aide de l'attribut 'html'.</p>
+						<div class="text-center">
+							<figure class="figure text-center">
+								<img src="/static/images/doc/24.png" alt="Tooltip" class="figure-img img-fluid border rounded"> 
+								<figcaption class="figure-caption">Ajout d'un tooltip avec d3</figcaption>
+							</figure>
+						</div>
+					</section>
+					<p>Cela conclut notre présentation des procédés utilisés pour générer nos histogrammes. Dans cet exemple, nous importons les données à l'aide d'un fichier CSV, puis après avoir généré les éléments du graphique, nous avons ajouté des tooltips afin d'ajouter des informations de façon dynamique sans encombrer la visualisation.</p>
+				</section>
+				<section id="pie_chart">
+					<h2 class="text-left">Diagrammes circulaires</h2>
+					<p>Cette visualisation ainsi que la suivante ne sont utilisées que sur les pages spécifiques aux compétences PIX. Elles sont utilisées afin de montrer des informations plus précises sur chaque compétence. Le diagramme circulaire en particulier permet de visualiser de façon intuitive la distribution des notes lors du positionnement et lors de la certification. Cette fois-ci les données utilisées sont importées à l'aide d'un tableau.</p>
+					<p>La bibliothèque d3 permet de créér simplement des diagrammes circulaires, en se reposant sur un ensemble de variables définissant entre autres le rayon du cercle et le rayon de l'arc intérieur. Voici comment nous initialisons nos diagrammes circulaires.</p>
+					<div class="text-center">
+						<figure class="figure text-center">
+							<img src="/static/images/doc/25.png" alt="Initialisation d'un diagramme circulaire" class="figure-img img-fluid border rounded"> 
+							<figcaption class="figure-caption">Initialisation d'un diagramme circulaire</figcaption>
+						</figure>
+					</div>
+					<p>En ce qui concerne la mise en forme des données, de la même façon que les données déterminaient la hauteur de la barre dans notre histogramme, ici c'est l'angle occupé qui est déterminé par les données.</p>
+					<div class="text-center">
+						<figure class="figure text-center">
+							<img src="/static/images/doc/26.png" alt="Calcul des angles dans un diagramme circulaire" class="figure-img img-fluid border rounded"> 
+							<figcaption class="figure-caption">Calcul des angles dans un diagramme circulaire</figcaption>
+						</figure>
+					</div>
+					<p>Les couleurs sont ensuite appliquées sur chaque segment du diagramme. Ici nous avons choisi d'utiliser une échelle de couleur afin que notre visualisation transmette l'idée de progression des niveaux faibles au niveaux élevés. En l'occurrence, les couleurs vont plus sombre pour les niveaux faibles au plus clair pour les niveaux élevés. De la même façon, les pourcentages sont ajoutés ultérieurement, et de même que pour l'histogramme, des tooltips permettent d'obtenir des informations supplémentaire pour chaque segment.</p>
+					<div class="text-center">
+						<figure class="figure text-center">
+							<img src="/static/images/doc/27.png" alt="Diagramme circulaire" class="figure-img img-fluid border rounded"> 
+							<figcaption class="figure-caption">Utilisation des tooltips pour les diagrammes circulaires</figcaption>
+						</figure>
+					</div>
+				</section>
+				<section id="box_plot">
+					<h2 class="text-left">Diagrammes en boîte</h2>
+					Cette dernière visualisation complète les diagrammes circulaires en permettant de visualiser où se situe la compétence en question parmi l'ensemble des compétences.
+					<p>Comme pour l'histogramme précédent, plusieurs statistiques seront nécessaires pour construire cette visualisation. C'est pourquoi nous importons les données à partir d'un fichier CSV, généré en Python.</p>
+					<div class="text-center">
+						<figure class="figure text-center">
+							<img src="/static/images/doc/28.png" alt="Import des données CSV" class="figure-img img-fluid border rounded"> 
+							<figcaption class="figure-caption">Import et traitement des données</figcaption>
+						</figure>
+					</div>
+					<p>On reconnaît les statistiques nécessaire à la création de diagrammes en boîtes, à savoir le minimum et le maximum, les premier et troisième quartiles, et la médiane.</p>
+					<p>En ce qui concerne les boîtes, un certain nombre d'opérations sont nécessaires, de la création des barres pour les valeurs minimum et maximum au rectangle qui représentera la population située entre les premier et troisième quartile.</p>
+					<div class="text-center">
+						<figure class="figure text-center">
+							<img src="/static/images/doc/29.png" alt="Création des boîtes et de la médiane" class="figure-img img-fluid border rounded"> 
+							<figcaption class="figure-caption">Création des boîtes et dessin de la médiane</figcaption>
+						</figure>
+					</div>
+					<p>Enfin, la compétence sur laquelle on se trouve est désignée par une couleur différente, ce qui permet de la repérer plus facilement. Nous n'avons pas jugé nécessaire d'ajouter de tooltips pour cette visualisation.</p>
+					<div class="text-center">
+						<figure class="figure text-center">
+							<img src="/static/images/doc/30.png" alt="Diagrammes en boîte" class="figure-img img-fluid border rounded"> 
+							<figcaption class="figure-caption">Diagrammes en boîte pour les compétences</figcaption>
+						</figure>
+					</div>
+				</section>
+				<p>Voilà qui conclut notre présentation des différentes visualisations. Nous avons vu avec plus ou moins de détails comment nous avons créé les visualisations utilisées dans notre analyse ainsi que pour les pages spécifiques aux compétences. Nous avons ainsi eu l'opportunité d'aborder plusieurs aspects de la bibliothèque d3, tels que l'outil d'import de fichier CSV, ou encore la création facilitée de graphiques.</p>
+			</div>
+			<div class="container">
+				<hr>
+				<p><b>Théophile BARANGER et Louis MARRE</b></p>
+			</div>
+		</div>
+		{% endblock %}

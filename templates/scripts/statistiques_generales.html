@@ -1,0 +1,197 @@
+<script>
+    d3.csv("{{url_for('data_' + scope, source=source)}}")
+        .row(function(d){return {
+            {% if (scope=='subdomains') %}
+            name:d.label.slice(3),
+            label:d.label.slice(0,3),
+            {% else %}
+            name:d.label.slice(3),
+            label:+d.label.slice(0,1),
+            {% endif %}
+            Moyenne: d.Moyenne,
+            std: d.Écart_type};
+        })
+        .get(function(error,data){
+            var margin = {top: 20, right: 20, bottom: 75, left: 40};
+            var height = 350 - margin.top - margin.bottom;
+            var width = 550 - margin.left - margin.right;
+
+            var max = 6; // pourrait aussi être calculée (note_max_théorique + 1)
+
+            var x = d3.scaleBand()
+                .domain(data.map(function(d) { return d.label; }))
+                .range([0,width])
+                .padding(0.1);
+
+            var y = d3.scaleLinear().domain([0,max]).range([height,0]);
+
+            var xAxis = d3.axisBottom(x);
+            var yAxis = d3.axisLeft(y).ticks(6).tickPadding(5).tickSize(10);
+
+            var svg = d3.select("#stats_{{scope}}_{{source}}").append("svg")
+                .attr("class", "bg-light border rounded mb-4")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            var chartGroup = svg.append('g')
+                .attr('transform','translate(50,height)');
+
+            chartGroup.append('g')
+                .attr('class','x axis hidden')
+                .attr('transform','translate(0,'+height+')')
+                .call(xAxis);
+
+            chartGroup.append('g')
+                .attr('class','y axis hidden')
+                .call(yAxis);
+
+            chartGroup.append('g')
+                .attr('class', 'grid')
+                .call(d3.axisLeft()
+                    .scale(y)
+                    .tickSize(-width, 0, 0)
+                    .tickFormat(''));
+
+            svg.append("g")
+                   .attr("transform", "translate(0," + height + ")")
+                   .call(d3.axisBottom(x))
+                   .append("text")
+                   .attr("y", 55 )
+                   .attr("x", width/2  )
+                   .attr("text-anchor", "middle")
+                   .attr("font-size", "14px")
+                   .attr('fill','black')
+                   .attr("stroke", "black")
+                   .text("Niveau moyen des étudiant(e)s par {% if (scope == 'subdomains') %}\
+                   compétence{% else %} domaine {% endif %}" + " ({{source}})");
+
+            var tip = d3.tip()
+                .attr('class', 'd3-tip')
+                .offset([-10, 0])
+                .html(function(d) {
+                    return " <span style='color:white'>" + d.name +' : ' + '<b>' + d.Moyenne + '</b> (écart-type : ' + d.std + ')</span>';
+            });
+
+            svg.call(tip);
+
+            svg.selectAll('rect')
+                .data(data)
+                .enter()
+                .append('rect')
+                    .attr('class','bar')
+                    .attr("x", function(d) { return x(d.label); })
+                    .attr("y", function(d) { return y(d.Moyenne); })
+                    .attr('fill', function(d){
+                        return "rgb(" + (255-(d.Moyenne*(255/(max)))) + "," + (255-(d.Moyenne*(255/(max)))) + "," + (d.Moyenne*(255/(max-1))-20) + ")"
+                        ;})
+                    .on("mouseover.rect", onMouseOver)
+                    .on("mouseover.text", tip.show)
+                    .on("mouseout.rect", onMouseOut)
+                    .on("mouseout.text",tip.hide)
+                    .attr("width", x.bandwidth()).transition()
+                    .ease(d3.easeBounce).duration(2000)
+                    .delay(function (d, i) {
+                        return i * 100;
+                    })
+                    .attr("height", function(d) { return height - y(d.Moyenne); });
+
+
+
+            svg.selectAll('lineErrorValue')
+                .attr('class','errorLine')
+                .data(data).enter()
+                .append('line')
+                    .transition()
+                    .duration(3000)
+                    .attr('x1',function(d) { return x(d.label) + (x.bandwidth()/2)-3; })
+                    .attr('y1',function(d) { return y(d.Moyenne);})
+                    .attr('x2',function(d) { return x(d.label) + (x.bandwidth()/2)+3; })
+                    .attr('y2',function(d) { return y(d.Moyenne) ;})
+                    .style('opacity','1')
+                    .attr('stroke','red')
+                    .attr('stroke-width','2');
+
+
+
+
+            svg.selectAll('lineErrorBottom')
+                .attr('class','errorLine')
+                .data(data).enter()
+                .append('line')
+                    .transition()
+                    .duration(3000)
+                    .attr('x1',function(d) { return x(d.label) + (x.bandwidth()/2)-6; })
+                    .attr('y1',function(d) { return y(d.Moyenne - ((d.std)/2));})
+                    .attr('x2',function(d) { return x(d.label) + (x.bandwidth()/2)+6; })
+                    .attr('y2',function(d) { return y(d.Moyenne - ((d.std)/2));})
+                    .style('opacity','1')
+                    .attr('stroke','blue')
+                    .attr('stroke-width','2');
+
+            svg.selectAll('lineErrorTop')
+                .data(data).enter()
+                .append('line')
+                    .transition()
+                    .duration(3000)
+                    .attr('x1',function(d) { return x(d.label) + (x.bandwidth()/2)-6; })
+                    .attr('y1',function(d) { return y(d.Moyenne - ((-d.std)/2));})
+                    .attr('x2',function(d) { return x(d.label) + (x.bandwidth()/2)+6; })
+                    .attr('y2',function(d) { return y(d.Moyenne - ((-d.std)/2));})
+                    .style('opacity','1')
+                    .attr('stroke','blue')
+                    .attr('stroke-width','2');
+
+
+            svg.selectAll('lineErrorRange')
+                .data(data).enter()
+                .append('line')
+                    .transition()
+                    .duration(3000)
+                    .attr('x1',function(d) { return x(d.label) + (x.bandwidth()/2); })
+                    .attr('y1',function(d) { return y(d.Moyenne - ((d.std)/2));})
+                    .attr('x2',function(d) { return x(d.label) + (x.bandwidth()/2); })
+                    .attr('y2',function(d) { return y(d.Moyenne - ((-d.std)/2));})
+                    .style('opacity','0.7')
+                    .attr('stroke','blue')
+                    .attr('stroke-width','1')
+                    .attr('stroke-dasharray','5 6');
+
+            function onMouseOver(d, i) {
+                d3.select(this)
+                    .attr('class', 'highlight');
+
+                d3.select(this)
+                .transition()
+                .duration(100)
+                .attr('x',  x(d.label) - 4)
+                .attr('width', x.bandwidth() + 8);
+
+                svg.append('line')
+                    .attr('class','divergence')
+                    .attr('x1',0)
+                    .attr('y1',y(d.Moyenne))
+                    .attr('x2',width)
+                    .attr('y2',y(d.Moyenne))
+                    .attr('stroke','red')
+                    .attr('stroke-dasharray','5 6')
+                    .attr('stroke-width','2');
+            }
+
+            function onMouseOut(d, i) {
+
+                d3.select(this)
+                   .attr('class', 'bar');
+
+                d3.select(this)
+                   .transition()
+                   .duration(100)
+                   .attr('x',  x(d.label) )
+                   .attr('width', x.bandwidth())
+                   .attr('opacity','1');
+
+                svg.selectAll('.divergence').remove();
+             }
+        });
+</script>

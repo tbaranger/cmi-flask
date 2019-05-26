@@ -1,0 +1,125 @@
+<script>
+    {% if file=='Positionnement' %}
+    var dataset = {{position_vs_expectations}};
+    {% elif file=='Certification' %}
+    var dataset = {{certif_vs_expectations}};
+    {% endif %}
+
+    var margin = {top: 20, right: 50, bottom: 75, left: 50};
+    var height = 350 - margin.top - margin.bottom;
+    var width = 550 - margin.left - margin.right;
+
+    var max = Math.floor(d3.max(dataset, function(d){ return d/100})+1)*100;
+
+    var x = d3.scaleBand()
+        .domain(dataset.map(function(d,i) { return i; }))
+        .range([0,width])
+        .padding(0.1);
+
+    var y = d3.scaleLinear().domain([0,max]).range([height,0]);
+
+    var xAxis = d3.axisBottom(x);
+    var yAxis = d3.axisLeft(y).ticks(6).tickPadding(5).tickSize(10);
+
+    var svg = d3.select("#expectation{{file}}")
+        .append("svg")
+        .attr("class", "mb-4 bg-light border rounded")
+        .attr("width", width + margin.right + margin.left)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform",
+            "translate("+ margin.left + "," + margin.top + ")");
+
+    var chartGroup = svg.append("g")
+        .attr('transform','translate(50,height)');
+
+    chartGroup.append('g')
+        .attr('class','x axis hidden')
+        .attr('transform','translate(0,'+height+')')
+        .call(xAxis);
+
+    chartGroup.append('g')
+        .attr('class','y axis hidden')
+        .call(yAxis);
+
+    chartGroup.append('g')
+        .attr('class', 'grid')
+        .call(d3.axisLeft()
+            .scale(y)
+            .tickSize(-width, 0, 0)
+            .tickFormat(''));
+
+    svg.append("g")
+       .attr("transform", "translate(0," + height + ")")
+       .call(d3.axisBottom(x))
+       .append("text")
+       .attr("y", 55 )
+       .attr("x", width/2 )
+       .attr("text-anchor", "middle")
+       .attr("font-size", "12px")
+       .attr('fill','black')
+       .attr("stroke", "black")
+       .text("Étudiant(e)s ayant répondu aux attentes dans 'x' compétences ({{file}})");
+
+   var tip = d3.tip()
+        .attr('class', 'd3-tip')
+        .offset([-10, 0])
+        .html(function(d,i) {
+            if(i == 0){
+                return "<span style='color:white'> Aucune compétence validée : " + '<b>' + d + '</b>' + " étudiant(e)s</span>";
+            }else if (i == 1){
+                return "<span style='color:white'>" + i + ' compétence validée : ' + '<b>' + d + '</b>' + " étudiant(e)s</span>";
+            }else{
+                return "<span style='color:white'>" + i + ' compétences validées : ' + '<b>' + d + '</b>' + " étudiant(e)s</span>";
+            }
+    });
+
+    svg.call(tip);
+
+    svg.selectAll('rect')
+        .data(dataset)
+        .enter()
+        .append('rect')
+            .attr('class','bar')
+            .attr("x", function(d, i) { return x(i); })
+            .attr("y", function(d) { return y(d); })
+            .attr('fill', function(d){
+                return "rgb(" + (255-(d)) + ", " + (255-(d)) + ", " + (d) + ")"
+                ;})
+            .on("mouseover.rect", onMouseOver)
+            .on("mouseover.text", tip.show)
+            .on("mouseout.rect", onMouseOut)
+            .on("mouseout.text",tip.hide)
+            .attr("width", x.bandwidth()).transition()
+            .ease(d3.easeLinear).duration(300)
+            .delay(function (d, i) {
+                return i * 100;
+            })
+            .attr("height", function(d) { return height - y(d); });
+
+        function onMouseOver(d, i) {
+                  d3.select(this)
+                      .attr('class', 'highlight');
+
+                  d3.select(this)
+                  .transition()
+                  .duration(100)
+                  .attr('x',  x(i) - 3)
+                  .attr('width', x.bandwidth() + 6);
+        }
+
+          function onMouseOut(d, i) {
+
+              d3.select(this)
+                 .attr('class', 'bar');
+
+              d3.select(this)
+                 .transition()
+                 .duration(100)
+                 .attr('x',  x(i))
+                 .attr('width', x.bandwidth())
+                 .attr('opacity','1');
+
+              svg.selectAll('.divergence').remove();
+           }
+</script>

@@ -1,0 +1,101 @@
+<script>
+
+    {% if file=='Positionnement' %}
+    var dataset = {{effectifs_note_positionnement}};
+    {% elif file=='Certification' %}
+    var dataset = {{effectifs_note_certification}};
+    {% endif %}
+    
+	var total = Math.floor(d3.sum(dataset));
+
+    var margin = {top:20, right:20, bottom: 0, left:20},
+    width= 500 - margin.right - margin.left,
+    height = 500 - margin.top - margin.bottom,
+    radius = width/2;
+
+var color = d3.scaleOrdinal()
+    .range(["#0D1981","#113C99","#1768B0","#1D9AC6","#39C5D0","#55D9CB","#72E2C1","#90EABE"]);
+
+var arc = d3.arc()
+    .outerRadius(radius -70)
+    .innerRadius(radius - width/2);
+
+var labelArc = d3.arc()
+    .outerRadius(radius -45)
+    .innerRadius(radius -40);
+
+var nameArc = d3.arc()
+    .outerRadius(radius -100 )
+    .innerRadius(radius -100);
+
+var pie = d3.pie()
+    .sort(null)
+    .value(function(d) { return d; });
+
+var tip = d3.tip()
+            .attr('class', 'd3-tipforpies')
+            .offset([80, -50])
+            .html(function(d,i) {
+                return " <span style='color:white'><p class='text-center mb-1'>Note : <b style='font-size:18px'>"+i+"</b><br><b style='font-size:16px; line-height:30px'>" + d.data +'</b> étudiant(e)s.</p></span>';
+        });
+
+var svg = d3.select("#repartition{{file}}").append("svg")
+    .attr("width",width)
+    .attr('height',height)
+    .append("g")
+    .attr("transform","translate("+ (width/2 ) +","+height/2 +")");
+
+    svg.append("g")
+        .attr("transform", "translate(" + (radius/2 -120) + "," + (height/2 -5) + ")")
+        .attr("text-anchor",'middle')
+        .append("text")
+        .text("Répartition des notes ({{file}})")
+        .attr("id", "pie_title")
+
+    svg.call(tip);
+
+    var g = svg.selectAll(".arc")
+        .data(pie(dataset))
+        .enter().append("g")
+        .on("mouseover",onMouseOver)
+        .attr("class","arc");
+
+    g.append("path")
+        .attr('class','pie')
+        .attr("d",arc)
+        .style("fill",function(d,i){ return color(d.data);})
+        .attr('stroke','white')
+        .attr('stroke-width','2')
+        .attr('stroke-opacity','0.5')
+        .on("mouseover.text", tip.show)
+        .on("mouseout.text",tip.hide);
+
+
+
+    g.append("text")
+        .attr('x','-23')
+        .attr('y','5')
+        .attr("transform", function(d){ return "translate(" + labelArc.centroid(d)+ ")";})
+        .text(function(d){ return ((d.data/total)*100).toPrecision(3)+"%";} )
+        .attr('opacity',function(d){
+            if(((d.data/total)*100)<2){
+                return '0';
+            }else{
+                return '1';
+            }
+        })
+        .attr('fill','black')
+        .attr('stroke','lightblue')
+        .attr('stroke-width','0.1')
+        .style('font-size','20')
+        .style('font-weight','bold');
+
+
+function onMouseOver(){
+    d3.select(this)
+    .attr('fill','black');
+}
+
+
+
+</script>

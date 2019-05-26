@@ -1,0 +1,28 @@
+{% extends "structure.html" %}
+
+		{% block content %}
+        <div id="top" class="container bg-light rounded" style="padding-top:10px; padding-bottom: 10px;
+        padding-left:20px; padding-right:20px; margin-top:70px; margin-bottom:20px">
+            <h2 class="text-center page-title">{{name}}</h2>
+            <p class="first-paragraph">Voici la liste des personnages en relation avec {{name}} :</p>
+            <ul>
+                {% for character in relations %}
+                    <li>{{relations[character][0]}} ({{relations[character][1]}} rencontres)</li>
+                {% endfor %}
+            </ul>
+
+            <p>Maintenant, testez votre mémoire et tentez de gagner un cookie virtuel
+                en essayant notre <a href="{{url_for('hello')}}">formulaire super génial 2.0</a> !</p>
+
+		</div>
+
+        <div class="container">
+            <div class="row">
+                <div class="col text-right">
+                    <span class="text-white" for="top_button">Retour en haut</span>
+                    <a href="#top" id="top_button"><img src="/static/images/up_arrow.png"
+                        alt="Flèche vers le haut" height="30" width="24"></a>
+                </div>
+            </div>
+        </div>
+		{% endblock %}

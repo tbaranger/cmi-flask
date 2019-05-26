@@ -1,0 +1,86 @@
+
+g.hidden line,
+g.hidden path{
+    stroke: blue;
+    stroke-width: 0.5;
+    opacity: 0.2;
+}
+
+g.grid{
+    stroke: blue;
+    opacity: 0.2;
+}
+
+g.tick text{
+    font-size: 10px;
+    font-weight: bold;
+    fill: black;
+    text-anchor: middle;
+}
+
+g.tick-small text{
+    font-size: 10px;
+    font-weight: bold;
+    fill: black;
+    text-anchor: middle;
+}
+
+.d3-tip {
+    line-height: 1;
+    font-size:16px;
+    padding: 12px;
+    background: #603038;
+    color: rgb(0, 0, 0);
+    border-radius: 30px;
+}
+
+.d3-tip:after {
+    box-sizing: border-box;
+    display: inline;
+    font-size: 11px;
+    width: 100%;
+    line-height: 1;
+    color: #603038;
+    content: "\25BC";
+    position: absolute;
+    text-align: center;
+}
+
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+
+.d3-tipforpies {
+    line-height: 1;
+    font-size:16px;
+    padding: 12px;
+    background: #603038;
+    color: rgb(0, 0, 0);
+    border-radius: 30px;
+    
+}
+
+
+
+.highlight {
+    fill: #603038;
+}
+
+.pie:hover{
+    stroke:blue;
+    stroke-width: 3px;
+}
+
+#pie_title{
+    font-weight: bold;
+    font-size: 20px;
+}
+
+
+
+.errorLine{
+    stroke: red;
+    stroke-width: 10;
+}

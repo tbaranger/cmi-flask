@@ -1,0 +1,221 @@
+{% extends "structure.html" %}
+
+		{% block content %}
+
+		<script type="text/javascript" src="../static/js/d3.v4.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>
+
+        <div id="top" class="container-fluid bg-light text-justify pt-2 mt-5 pb-3">
+			<button onclick="topFunction()" id="myBtn" title="Retour en haut"><img src="/static/images/up_arrow.png" alt="Flèche vers le haut" width="40"></button>
+			<div class="container">
+				<h1 class="text-center page-title display-4"> Analyse Globale des données PIX</h1>
+				<h1 class="text-left">Qu'est-ce que PIX ?</h1>
+				<p>Pix est un nouveau service public dont l'objectif et de permettre à ceux qui le désirent - citoyens, étudiant(e)s, professionnels - de mesurer leurs compétences numériques. Comme le <abbr title="Certificat Informatique et Internet">C2i</abbr> qui le précède, PIX propose un système de certification.</p>
+				<p>Cinq grands domaines composent les connaissances numériques évaluées par PIX :</p>
+				<ul>
+					<li>Informations et données</li>
+					<li>Communication et collaboration</li>
+					<li>Création de contenu</li>
+					<li>Protection et sécurité</li>
+					<li>Environnement numérique</li>
+				</ul>
+				<p>Ces domaines sont subdivisés en 16 compétences. On peut alors choisir de se positionner sur une ou plusieurs de ces compétences, afin de constituer son "profil" numérique.</p>
+				<p>Comme pour le C2i, les tests de positionnement et les certifications PIX peuvent être utilisés dans le cadre d'enseignements universitaires afin de constituer une unité d'enseignement liée aux compétences numériques.</p>
+				<p>C'est dans ce contexte que se place l'analyse que nous proposons ici.</p>
+				<p><a href="https://pix.fr/aide/pix-comment-ca-marche" alt="Site web PIX">Pour plus d'informations sur PIX, suivre ce lien.</a></p>
+			</div>
+		</div>
+		<div class="container-fluid text-white text-justify pt-3 pb-3">
+			<div class="container">
+				<h1 class="text-left">Statistiques générales</h1>
+				<h2 class="text-left">L'ensemble de données</h2>
+				<p>Les données utilisées dans cette analyse correspondent aux scores de positionnement et de certification d'environ 1500 étudiant(e)s de Licence 1 de l'Université de Bordeaux. Ces données sont téléchargeables <a class="text-light" href="{{url_for('pix_dataset')}}"><font size="+1"><b>ici</b></font></a>.</p>
+				<p>Les niveaux de certification n'étant ouverts que jusqu'au niveau <b>5</b> au moment où ces tests ont été passés, les niveaux obtenus se trouvent entre <b>0</b> et <b>5</b>. Les tirets "-" figurant dans la feuille de certification correspondent aux compétences pour lesquels l'étudiant(e) n'est pas parvenu à se certifier au niveau correspondant à celui de son positionnement, ni au niveau inférieur. Nous avons choisi de remplacer ces tirets par un score nul lors de nos calculs.</p>
+				<p>Enfin, dans chacune des feuilles de résultats, une ligne correspond à un étudiant, mais il n'y a aucun lien entre les deux feuilles, ce qui nous interdit de comparer les scores de positionnement et de certification pour un ou une étudiant(e) en particulier.</p>
+				<h2 class="text-left">Visualisation</h2>
+				<p>On se propose ici de visualiser l'ensemble de données dans sa globalité. Les premiers histogrammes montrent le niveau moyen obtenus par les élèves lors du positionnement et lors de la certification.</p>
+				<p>Commençons par regarder ces données par domaine afin d'avoir une vision globale des résultats. Nous regarderons le détail des niveaux obtenus dans chaque compétence plus bas.</p>
+				<div class="mt-3 text-center">
+					<span id="stats_domains_Positionnement">
+						{% with scope='domains', source='Positionnement' %}
+						{% include '/scripts/statistiques_generales.html' %}
+						{% endwith %}
+					</span>
+					<span id="stats_domains_Certification">
+						{% with scope='domains', source='Certification' %}
+						{% include '/scripts/statistiques_generales.html' %}
+						{% endwith %}
+					</span>
+				</div>
+				<p>On peut dès à présent remarquer que le niveau moyen obtenu par les étudiant(e)s est bien plus élevé lors du positionnement que lors de la certification. Nous verrons au fur à et à mesure que nous avançons dans notre analyse que plusieurs raisons peuvent expliquer ce phénomène.</p>
+				<p>Par ailleurs, il apparaît que certains domaines sont mieux maîtrisés par les étudiant(e)s que d'autres. Aucune conclusion ne peut être tirée à ce stade, mais on note tout de même les moyennes plus faibles obtenues pour les domaines
+				<b>&laquo;&nbsp;Création de contenu&nbsp;&raquo;</b> et <b>&laquo;&nbsp;Protection et sécurité&nbsp;&raquo;</b>.</p>
+				<p>Regardons maintenant les résultats plus en détails, c'est-à-dire selon les 16 compétences.</p>
+				<div class="mt-3 text-center">
+					<span id="stats_subdomains_Positionnement">
+						{% with scope='subdomains', source='Positionnement' %}
+						{% include '/scripts/statistiques_generales.html' %}
+						{% endwith %}
+					</span>
+					<span id="stats_subdomains_Certification">
+						{% with scope='subdomains', source='Certification' %}
+						{% include '/scripts/statistiques_generales.html' %}
+						{% endwith %}
+					</span>
+				</div>
+				<p>On remarque que ce niveau de détail nous permet d'identifier plus précisément les compétences où les étudiant(e)s ont tendance à obtenir des niveaux plus faibles. Il s'agit des compétences <b>3.1</b> et <b>3.3</b> : <b>&laquo;&nbsp;{{subdomain_names[7][4:]}}&nbsp;&raquo;</b> et <b>&laquo;&nbsp;{{subdomain_names[9][4:]}}&nbsp;&raquo;</b>. On pourrait décider de renforcer plus particulièrement ces compétences à l'avenir. La compétence <b>3.2</b>, <b>&laquo;&nbsp;{{subdomain_names[9][4:]}}&nbsp;&raquo;</b>, ne semble pas quant à elle poser de problème particulier aux étudiant(e)s.</p>
+				<p>La taille des barres d'erreur lors de la certification traduit le fait qu'il soit assez fréquent que des étudiant(e)s échouent lors de la certification. On pourra vérifier cette hypothèse en étudiant les échecs à la certification plus en détail.</p>
+			</div>
+		</div>
+		<div class="container-fluid bg-light text-justify pt-3 pb-3">
+			<div class="container">
+				<h1 class="text-left">Analyse des échecs lors de la certification</h1>
+				<p>Notre objectif étant d'améliorer les résultats des étudiant(e)s, nous allons maintenant regarder le nombre d'entre eux qui ne sont pas parvenu à se certifier pour un certain nombre de compétences. Nous verrons ensuite s'il est possible de déterminer précisément quelles compétences ont tendance à nécessiter plus de travail pour les étudiants.</p>
+				<div class="failures text-center">
+					{% include '/scripts/failures_chart.html' %}
+				</div>
+				<p>On remarque qu'il est plus fréquent pour les étudiant(e)s de ne pas parvenir à se certifier pour une ou deux compétences que de se certifier sur toutes. Par ailleurs, il est très fréquent d'échouer la certification pour <b>au moins</b> une compétence (~<b>84%</b> des étudiant(e)s).</p>
+				<p>Il est en revanche assez rare d'en rater plus de 5, et il faut également garder à l'esprit que cela n'est qu'une mesure de la pertinence du niveau obtenu lors du positionnement, et non pas du niveau des étudiant(e)s. <br>
+				En effet, on ne sait pas à priori quelles niveaux ont obtenu les <b>16%</b> d'étudiant(e)s qui sont parvenu à se certifier sur toutes les compétences. On sait seulement que pour ces étudiant(e)s, leur niveau de positionnement était plutôt adapté à leur niveau.</p>
+				<p>Voyons maintenant si les compétences qui sont le plus souvent la cause de ces échecs. Si une ou plusieurs compétences ressortent, nous pourrons alors considérer qu'elles nécessitent plus de travail que les autres pour des étudiant(e)s au profils similaires à ceux de notre ensemble de données.</p>
+				<p>On s'intéresse au cas où quatre compétences ont été échouées au plus, le reste concernant trop peu d'étudiant(e)s.</p>
+
+				<div class="mt-3 text-center">
+					<span class="failed_subdomains_1">
+					{% with data=failed_subdomains_1, class="failed_subdomains_1", nb=1 %}
+					{% include '/scripts/failures_chart_subdomains.html' %}
+					{% endwith %}
+					</span>
+					<span class="failed_subdomains_2">
+					{% with data=failed_subdomains_2, class="failed_subdomains_2", nb=2 %}
+					{% include '/scripts/failures_chart_subdomains.html' %}
+					{% endwith %}
+					</span>
+				</div>
+				<div class=" text-center">
+					<span class="failed_subdomains_3">
+					{% with data=failed_subdomains_3, class="failed_subdomains_3", nb=3 %}
+					{% include '/scripts/failures_chart_subdomains.html' %}
+					{% endwith %}
+					</span>
+					<span class="failed_subdomains_4">
+					{% with data=failed_subdomains_4, class="failed_subdomains_4", nb=4 %}
+					{% include '/scripts/failures_chart_subdomains.html' %}
+					{% endwith %}
+					</span>
+				</div>
+
+				<p>Il apparaît clairement que la compétence <b>3.3</b>, <b>&laquo;&nbsp;{{subdomain_names[9][4:]}}&nbsp;&raquo;</b> est source de plus d'échecs que les autres compétences. La préparation concernant cette compétence pourrait donc certainement être améliorée. Par ailleurs, on remarque qu'il n'y a pas nécessairement de corrélation entre les niveaux moyens obtenus et le nombre d'échecs pour une compétence particulière. Outre la préparation, on peut aussi supposer que pour cette compétence en particulier, les questions lors de la certification soient plus compliquées que lors du positionnement. En effet, pour des étudiant(e)s étant parvenu à se certifier sur toutes les compétences sauf une, c'est-à-dire des étudiants réguliers dans leur performance, il est surprenant qu'une compétence ressorte plus que les autres.</p>
+				<p>Les compétences <b>1.1</b>, <b>&laquo;&nbsp;{{subdomain_names[0][4:]}}&nbsp;&raquo;</b> et <b>1.3</b>, <b>&laquo;&nbsp;{{subdomain_names[2][4:]}}&nbsp;&raquo;</b> se démarquent également du reste, alors que les moyennes associées n'indiquaient pas à priori de difficulté pour les étudiants. <br>
+				Pour certaines compétences, le niveau moyen obtenu est certes faible, mais le nombre d'échecs n'est pas aussi important. Ces compétences, comme par exemple la compétence <b>3.1</b>, <b>&laquo;&nbsp;{{subdomain_names[7][4:]}}&nbsp;&raquo;</b> nécessiteraient également une préparation plus poussée.</p>
+				<p>Par ailleurs, on peut observer la répartition des compétences échouées pour tous les étudiant(e)s sans se limiter à un nombre d'échec particuliers. Voici alors le résultat.</p>
+				<div class=" text-center">
+					<span class="failed_subdomains">
+					{% with data=failed_subdomains, class="failed_subdomains", nb=0 %}
+					{% include '/scripts/failures_chart_subdomains.html' %}
+					{% endwith %}
+					</span>
+				</div>
+				<p>Pour plus d'informations sur chaque compétence, comme la distribution des niveaux obtenus, sélectionnez une compétence dans la barre de navigation et vous accéderez à des données plus détaillées.</p>
+			</div>
+		</div>
+		<div class="container-fluid text-white text-justify pt-3 pb-3">
+			<div class="container" id="barChart">
+				<h1 class="text-left">Analyse des résultats</h1>
+				<p>Comme nous l'avons expliqué plus haut, les scores de positionnement et de certification figurant dans cette analyse ont été obtenus dans le cadre d'une évaluation d'étudiant(e)s de Licence 1.</p>
+				<p>Or, n'ayant pas la possibilité de travailler toutes les compétences lors des séances sur site, les enseignants ont déterminé un <em>niveau attendu</em> pour chacune des 16 compétences. On se propose ici d'analyser l'efficacité de cette préparation avec les enseignants.</p>
+				<p>Voici donc un tableau indiquant le niveau attendu pour chacune des 16 compétences.</p>
+				<table class="table table-bordered table-sm text-center bg-light mt-4 mb-4">
+					<thead>
+						<tr>
+							<th>Compétence</th>
+							{% for k in range(0, subdomain_names|length) %}
+							<td><abbr title="{{subdomain_names[k][4:]}}">{{subdomain_names[k][0:3]}}</abbr></td>
+							{% endfor %}
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th>Niveau</th>
+							{% for k in range(0, subdomain_names|length) %}
+							<td>{{expectations[k]}}</td>
+							{% endfor %}
+						</tr>
+					</tbody>
+				</table>
+				<p>Tout d'abord, regardons combien d'élèves sont parvenu à égaler ou à dépasser les niveaux attendus pour un certain nombre de compétences lors du positionnement, puis lors de la certification.<p>
+				<div class="mt-4 text-center">
+					<span id="expectationPositionnement">
+						{% with file='Positionnement' %}
+						{% include '/scripts/expectations_chart.html' %}
+						{% endwith %}
+					</span>
+					<span id="expectationCertification">
+						{% with file='Certification' %}
+						{% include '/scripts/expectations_chart.html' %}
+						{% endwith %}
+					</span>
+				</div>
+				<br><p>On remarque que ces deux histogrammes n'ont pas la même allure. En effet, les résultats lors de la certification apparaissent plus favorables. Le nombre de compétences réussies au niveau attendus par les professeurs est bien plus élevé, ce qui se traduit par un décalage &laquo;&nbsp;vers la droite&nbsp;&raquo; des barres. Lors de la certification, l'allure de l'histogramme rappelle plutôt celle d'une courbe en cloche, ce qui semble peut-être plus réaliste étant donné la nature des données.<p>
+				<p>Cela peut être expliqué par le fait que les étudiant(e)s aient eu deux tentatives pour procéder à leur positionnement. On peut également supposer que les questions posées lors de la certification sont plus tranchantes et qu'elles permettent de mieux évaluer le niveau des étudiant(e)s.</p>
+				<p>Pour conclure, on notera également que les compétences &laquo;&nbsp;difficiles&nbsp;&raquo; identifiées dans la section précédentes se trouvent être des compétences travaillées en cours. De la même façon, certaines compétences non travaillées n'ont pas semblé poser de problème particuliers aux étudiant(e)s. On pourrait alors réfléchir à re-calibrer le travail en présentiel de façon à prendre en compte ces résultats.</p>
+			</div>
+		</div>
+		<div class="container-fluid bg-light text-justify pt-3 pb-3">
+			<div class="container">
+				<h1 class="text-left">Données brutes</h1>
+				<p>Voici un tableau récapulatif des différentes statistiques calculées sur l'ensemble des données. La valeur de gauche correspond au <b>positionnement</b>, celle de droite à la <b>certification</b>. Des liens pour télécharger ces données se trouvent sous le tableau.</p>
+				<table class="table table-hover text-center bg-light">
+					<thead>
+						<tr>
+							<th class="small">&nbsp;&nbsp;Domaines&nbsp;&nbsp;</th>
+							{% for i in range(1, statistiques|length - 2) %}
+							<td><b>{{statistiques[i] | replace("_", " ")}}</b></td>
+							{% endfor %}
+						</tr>
+					</thead>
+					<tbody class="table-sm">
+						{% for k in range(0, domain_names|length) %}
+						<tr>
+							<th><abbr title="{{domain_names[k][4:]}}">{{domain_names[k][0:1]}}</abbr></th>
+							{% for stat in range(1, statistiques|length - 2) %}
+							<td class="text-center small">{{stats_position_domains[k][stat]}}&nbsp;/&nbsp;{{stats_certif_domains[k][stat]}}</td>
+							{% endfor %}
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+				<table class="table table-hover text-center bg-light">
+					<thead>
+						<tr>
+							<th class="small">Compétences</th>
+							{% for i in range(1, statistiques|length - 2) %}
+							<td><b>{{statistiques[i] | replace("_", " ")}}</b></td>
+							{% endfor %}
+						</tr>
+					</thead>
+					<tbody class="table-sm">
+						{% for k in range(0, subdomain_names|length) %}
+						<tr>
+							<th><abbr title="{{subdomain_names[k][4:]}}">{{subdomain_names[k][0:3]}}</abbr></th>
+							{% for stat in range(1, statistiques|length - 2) %}
+							<td class="text-center small">{{stats_position[k][stat]}}&nbsp;/&nbsp;{{stats_certif[k][stat]}}</td>
+							{% endfor %}
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+				<p>Ici, il est important de noter que les statistiques liées à la dispersion des données sont remarquablement plus élevées lors de la certification que lors du positionnement. Cela s'explique par le fait que nous avons choisi de traduire un échec lors de la certification par l'obtention d'un score nul.</p>
+				<p><b>Liens de téléchargement</b></p>
+				<ul>
+					<li><b>Domaines</b> : (<a href="{{url_for('data_domains', source='Positionnement')}}">Positionnement</a> / <a href="{{url_for('data_domains', source='Certification')}}">Certification</a>)</li>
+					<li><b>Compétences</b> : (<a href="{{url_for('data_subdomains', source='Positionnement')}}">Positionnement</a> / <a href="{{url_for('data_subdomains', source='Certification')}}">Certification</a>)</li>
+				</ul>
+				<p>Pour plus d'informations sur la méthodologie utilisée pour la rédaction de cette analyse, voir la <a href="{{url_for('methodologie')}}">page dédiée</a>.</p>
+			</div>
+			<div class="container">
+				<hr>
+				<p><b>Théophile BARANGER et Louis MARRE</b></p>
+			</div>
+		</div>
+		{% endblock %}

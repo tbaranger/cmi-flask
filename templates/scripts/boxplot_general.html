@@ -1,0 +1,156 @@
+<script>
+    d3.csv("{{url_for('data_' + scope, source=source)}}")
+        .row(function(d){return {
+            {% if (scope=='subdomains') %}
+            name:d.label.slice(3),
+            label:d.label.slice(0,3),
+            {% else %}
+            name:d.label.slice(3),
+            label:+d.label.slice(0,1),
+            {% endif %}
+            Moyenne: d.Moyenne,
+            Mediane: d.Médiane,
+            Q1:  d.Premier_quartile,
+            Q3:  d.Troisième_quartile,
+            Min: d.Minimum,
+            Max: d.Maximum,
+            std: d.Écart_type };
+        })
+        .get(function(error,data){
+            var margin = {top: 20, right: 20, bottom: 75, left: 40};
+            var height = 400 - margin.top - margin.bottom;
+            var width = 550 - margin.left - margin.right;
+
+            var max = 6;
+
+            {% if (scope=='subdomains') %}
+            var x = d3.scaleBand()
+                .domain(data.map(function(d) { return d.label; }))
+                .range([0,width])
+                .padding(0.1);
+            {% else %}
+            var x = d3.scaleBand()
+                .domain(data.map(function(d) { return d.label; }))
+                .range([0,width])
+                .padding(0.1);
+            {% endif %}
+
+
+            var y = d3.scaleLinear().domain([0,max]).range([height,0]);
+
+            var xAxis = d3.axisBottom(x);
+            var yAxis = d3.axisLeft(y).ticks(6).tickPadding(5).tickSize(10);
+
+            var color = d3.scaleOrdinal()
+                .range(["#0D1981","#113C99","#1768B0","#1D9AC6","#39C5D0","#55D9CB","#72E2C1","#90EABE"]);
+
+
+            var svg = d3.select("#box_{{scope}}_{{source}}").append("svg")
+                .attr("class", "bg-light border rounded mb-4")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform",
+                    "translate(" + margin.left + "," + margin.top + ")");
+
+            var chartGroup = svg.append('g')
+                .attr('transform','translate(50,height)');
+
+            chartGroup.append('g')
+                .attr('class','x axis hidden')
+                .attr('transform','translate(0,'+height+')')
+                .call(xAxis);
+
+            chartGroup.append('g')
+                .attr('class','y axis hidden')
+                .call(yAxis);
+
+            chartGroup.append('g')
+                .attr('class', 'grid')
+                .call(d3.axisLeft()
+                    .scale(y)
+                    .tickSize(-width, 0, 0)
+                    .tickFormat(''));
+
+            svg.append("g")
+                   .attr("transform", "translate(0," + height + ")")
+                   .call(d3.axisBottom(x))
+                   .append("text")
+                   .attr("y", 55 )
+                   .attr("x", width/2  )
+                   .attr("text-anchor", "middle")
+                   .attr("font-size", "14px")
+                   .attr('fill','black')
+                   .attr("stroke", "black")
+                   .text("Diagrammes en boîtes représentant les {% if (scope == 'subdomains') %}\
+                   compétences{% else %} domaines {% endif %}" + " ({{source}})");
+
+
+            svg.selectAll('maximumLine')
+                .data(data).enter()
+                .append('line')
+                    .attr('x1',function(d) { return x(d.label) + (x.bandwidth()/2); })
+                    .attr('y1',function(d) { return y(d.Max);})
+                    .attr('x2',function(d) { return x(d.label) + (x.bandwidth()/2); })
+                    .attr('y2',function(d) { return y(d.Min) ;})
+                    .style('opacity','1')
+                    .attr('stroke','#0A2F51')
+                    .attr('stroke-width','1');
+
+            svg.selectAll('rect')
+                .data(data)
+                .enter()
+                .append('rect')
+                    .attr('class','bar')
+                    .attr("x", function(d) { return x(d.label); })
+                    .attr("y", function(d) { return y(d.Q3); })
+                    .attr("height", function(d) { return (y(d.Q1) - y(d.Q3)) ; })
+                    .attr("width", x.bandwidth())
+                    .attr('fill', function(d,i){
+                        if(i == {{subdomain}}) { return '#603038';}
+                        else { return '#39C5D0'}
+                    })
+                    .attr('stroke','#0A2F51');
+
+            svg.selectAll('medianLine')
+                .data(data).enter()
+                .append('line')
+                    .attr('x1',function(d) { return x(d.label) + (x.bandwidth()/2)-(x.bandwidth()/2); })
+                    .attr('y1',function(d) { return y(d.Mediane);})
+                    .attr('x2',function(d) { return x(d.label) + (x.bandwidth()/2)+(x.bandwidth()/2); })
+                    .attr('y2',function(d) { return y(d.Mediane) ;})
+                    .style('opacity','1')
+                    .attr('stroke', function(d,i){
+                        if(i == {{subdomain}}) { return '#fff';}
+                        else { return '#0A2F51'}
+                    })
+                    .attr('stroke-width','1');
+
+            svg.selectAll('minimumLine')
+                .data(data).enter()
+                .append('line')
+                    .attr('x1',function(d) { return x(d.label) + (x.bandwidth()/2)-(x.bandwidth()/2); })
+                    .attr('y1',function(d) { return y(d.Min);})
+                    .attr('x2',function(d) { return x(d.label) + (x.bandwidth()/2)+(x.bandwidth()/2); })
+                    .attr('y2',function(d) { return y(d.Min) ;})
+                    .style('opacity','1')
+                    .attr('stroke','#0A2F51')
+                    .attr('stroke-width','1');
+
+            svg.selectAll('maximumLine')
+                .data(data).enter()
+                .append('line')
+                    .attr('x1',function(d) { return x(d.label) + (x.bandwidth()/2)-(x.bandwidth()/2); })
+                    .attr('y1',function(d) { return y(d.Max);})
+                    .attr('x2',function(d) { return x(d.label) + (x.bandwidth()/2)+(x.bandwidth()/2); })
+                    .attr('y2',function(d) { return y(d.Max) ;})
+                    .style('opacity','1')
+                    .attr('stroke','#0A2F51')
+                    .attr('stroke-width','1');
+
+
+
+
+
+        });
+</script>

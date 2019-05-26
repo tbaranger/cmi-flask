@@ -1,0 +1,116 @@
+<script>
+    var dataset = {{data}};
+    var subdomains = {{subdomain_ids}};
+
+    var margin = {top: 20, right: 50, bottom: 75, left: 50};
+    var height = 300 - margin.top - margin.bottom;
+    var width = 450 - margin.left - margin.right;
+
+    var max = Math.floor(d3.max(dataset, function(d){ return d/100})+1)*100;
+
+    var x = d3.scaleBand()
+        .domain(subdomains.map(function(d,i) { return d; }))
+        .range([0,width])
+        .padding(0.1);
+
+    var y = d3.scaleLinear().domain([0,max]).range([height,0]);
+
+    var xAxis = d3.axisBottom(x);
+    var yAxis = d3.axisLeft(y).ticks(6).tickPadding(5).tickSize(10);
+
+    var svg = d3.select(".{{class}}")
+        .append("svg")
+        .attr("class", "mb-4 bg-light border rounded")
+        .attr("width", width + margin.right + margin.left)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform",
+            "translate("+ margin.left + "," + margin.top + ")");
+
+    var chartGroup = svg.append("g")
+        .attr('transform','translate(50,height)');
+
+    chartGroup.append('g')
+        .attr('class','x axis hidden')
+        .attr('transform','translate(0,'+height+')')
+        .call(xAxis);
+
+    chartGroup.append('g')
+        .attr('class','y axis hidden')
+        .call(yAxis);
+
+    chartGroup.append('g')
+        .attr('class', 'grid')
+        .call(d3.axisLeft()
+            .scale(y)
+            .tickSize(-width, 0, 0)
+            .tickFormat(''));
+
+    svg.append("g")
+       .attr("transform", "translate(0," + height + ")")
+       .call(d3.axisBottom(x))
+       .append("text")
+       .attr("y", 55 )
+       .attr("x", width/2 )
+       .attr("text-anchor", "middle")
+       .attr("font-size","12px")
+       .attr('fill','black')
+       .attr("stroke", "black")
+       .text("Nombre d'échecs par compétence {% if (nb) %}{% if(nb==1) %}(un échec){% elif(nb==2) %}(deux échecs){% elif(nb==3) %}(trois échecs) {%else%} (quatre échecs){% endif %}{% endif %}");
+
+   var tip = d3.tip()
+        .attr('class', 'd3-tip')
+        .offset([-10, 0])
+        .html(function(d,i) {
+            return "<span style='color:white'>Compétence <b>" + subdomains[i] + "</b> échouée : <b>" + d + "</b> étudiant(e)s </span>";
+        });
+
+    svg.call(tip);
+
+    svg.selectAll('rect')
+        .data(dataset)
+        .enter()
+        .append('rect')
+            .attr('class','bar')
+            .attr("x", function(d,i) { return x(subdomains[i]); })
+            .attr("y", function(d) { return y(d); })
+            .attr('fill', function(d){
+                return "rgb(" + (75 + d/(max/100)) + ", " + (75 + d/(max/100)) + ", " + (200-(d/(max/100))) + ")"
+                ;})
+            .on("mouseover.rect", onMouseOver)
+            .on("mouseover.text", tip.show)
+            .on("mouseout.rect", onMouseOut)
+            .on("mouseout.text",tip.hide)
+            .attr("width", x.bandwidth())
+            .transition()
+            .ease(d3.easeLinear).duration(300)
+            .delay(function (d, i) {
+                return i * 100;
+            })
+            .attr("height", function(d) { return height - y(d); });
+
+        function onMouseOver(d, i) {
+                  d3.select(this)
+                      .attr('class', 'highlight');
+
+                  d3.select(this)
+                  .transition()
+                  .duration(100)
+                  //.attr('x',  x(i) - 3)
+                  //.attr('width', x.bandwidth() + 6);
+        }
+
+          function onMouseOut(d, i) {
+
+              d3.select(this)
+                 .attr('class', 'bar');
+
+              d3.select(this)
+                 .transition()
+                 .duration(100)
+                 //.attr('x',  x(i))
+                 //.attr('width', x.bandwidth());
+
+              svg.selectAll('.divergence').remove();
+           }
+</script>

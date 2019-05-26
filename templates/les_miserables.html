@@ -1,0 +1,60 @@
+{% extends "structure.html" %}
+
+		{% block content %}
+        <div id="top" class="container bg-light rounded" style="padding-top:10px; padding-bottom: 10px;
+        padding-left:20px; padding-right:20px; margin-top:70px; margin-bottom:20px">
+            <h1 class="text-center page-title"> Les Personnages dans <em>Les Misérables</em></h1>
+            <p class="first-paragraph"> Le roman <em> Les Misérables </em> de Victor Hugo contient <b>{{number}}</b> personnages.</p>
+            <div class="row">
+                <div class="col" style="margin-top:10px">
+                    <h2> 1. Liste des personnages </h2>
+                    <p class="text-small"><em>Cliquez sur un personnage dans la liste ci-dessous pour accéder à la liste de
+                        ses interactions dans le roman.</em></p>
+                    <button class="btn btn-sm btn-outline-primary" data-toggle="collapse" data-target="#character_list">
+                        Afficher/masquer la liste des personnages</button>
+                    <div id="character_list" class="collapse in" style="margin-top:10px">
+                        <ul class="list-group h-50">
+                            {% for i in characters_list %}
+                                <li class="list-group-item py-2">
+                                    <a href="{{url_for('list_relations', name=i)}}">{{i}}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col" style="margin-top:20px">
+                    <h2> 2. Les Communautés de Personnages </h2>
+                    <p> Les personnages sont regroupés en 11 communautés, que
+                        l'on peut choisir de représenter par exemple en coloriant
+                        les noms des personnages grâce à une palette de couleurs.</p>
+
+                    <p> On peut aussi représenter le réseau social correspondant
+                        à l'aide d'outils plus poussés, tels que des logiciels
+                        de visualisation de donnée. Pour voir des exemples de
+                        visualisations, on pourra visiter par exemple les liens suivants :</p>
+                    <ul>
+                        <li><a href="http://studentwork.prattsi.org/infovis/visualization/les-miserables-character-network-visualization/">
+                            Les Misérables Character Network Visualisation</a> par nfesta</li>
+                        <li><a href="http://web.madstudio.northwestern.edu/re-visualizing-the-novel/">
+                            [Re-] Visualizing the Novel</a> par Matthew Taylor</li>
+                    </ul>
+                    <br /><p>Voici un exemple de visualisation du réseau des personnages :</p>
+                    <figure class="figure text-center">
+                        <img src="/static/images/NewmanGirvan2003Paper-Page14-1024x795.png" alt="Exemple de visualisation"
+                        class="figure-img img-fluid border rounded">
+                        <figcaption class="figure-caption">Un exemple de visualisation du réseau des personnages de <em>Les Misérables</em> par Newman et Girvan</figcaption>
+                    </figure>
+                </div>
+            </div>
+        </div>
+        <div class="container pb-5">
+            <div class="row">
+                <div class="col text-right">
+                    <span class="text-white" for="top_button">Retour en haut</span>
+                    <a href="#top" id="top_button"><img src="/static/images/up_arrow.png"
+                        alt="Flèche vers le haut" height="30" width="24"></a>
+                </div>
+            </div>
+        </div>
+		{% endblock %}

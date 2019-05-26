@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+        <meta charset="utf-8" />
+        {% if title  %}
+        <title>{{ title }}</title>
+        {% else %}
+        <title>Théophile Baranger | Projet CMI L2</title>
+        {% endif %}
+        <link rel="stylesheet" href="static/bootstrap-dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="static/css/additional.css" />
+		<link rel="stylesheet" type="text/css" href="static/css/charts.css" />
+        <link rel="icon" href="static/images/favicon.ico">
+	    <script src="static/js/jquery-3.3.1.min.js"></script>
+	    <script src="static/bootstrap-dist/js/bootstrap.js"></script>
+		<script src="static/js/additional.js"></script>
+	</head>
+
+	<body class="bg-light-blue">
+        <nav class="navbar bg-light fixed-top">
+			<ul class="nav nav-tabs d-flex w-100">
+				<li class="nav-item">
+					<a class="bg-dark text-white nav-link" href="{{url_for('index')}}">Accueil</a>
+				</li>
+		        <li class="nav-item dropdown">
+		            <a class="text-dark nav-link dropdown-toggle {%if miserables %}active{% endif %}" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Les Misérables</a>
+		            <div class="dropdown-menu">
+		                <a class="dropdown-item" href="{{url_for('les_miserables')}}">Les Personnages</a>
+		                <a class="dropdown-item" href="{{url_for('hello')}}">Formulaire</a>
+		            </div>
+		        </li>
+				<li class="nav-item">
+					<a class="text-dark nav-link {%if dicho %}active{% endif %}" href="{{url_for('recherche_dichotomique')}}">Recherche Dichotomique</a>
+				</li>
+				<li class="nav-item dropdown">
+            		<a class="bg-warning text-dark nav-link dropdown-toggle {%if pix %}active{% endif %}" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Analyse PIX</a>
+        			<div class="dropdown-menu">
+            			<a class="dropdown-item" href="{{url_for('analyse_globale')}}">Analyse globale</a>
+						<div class="dropdown-divider"></div>
+						<a class="dropdown-item" href="{{url_for('analyse_competences', id=0)}}">1.1 Mener une recherche et une veille d'information</a>
+						<a class="dropdown-item" href="{{url_for('analyse_competences', id=1)}}">1.2 Gérer des données</a>
+						<a class="dropdown-item" href="{{url_for('analyse_competences', id=2)}}">1.3 Traiter des données</a>
+						<a class="dropdown-item" href="{{url_for('analyse_competences', id=3)}}">2.1 Interagir</a>
+						<a class="dropdown-item" href="{{url_for('analyse_competences', id=4)}}">2.2 Partager et publier</a>
+						<a class="dropdown-item" href="{{url_for('analyse_competences', id=5)}}">2.3 Collaborer</a>
+						<a class="dropdown-item" href="{{url_for('analyse_competences', id=6)}}">2.4 S'insérer dans le monde numérique</a>
+						<a class="dropdown-item" href="{{url_for('analyse_competences', id=7)}}">3.1 Développer des documents textuels</a>
+						<a class="dropdown-item" href="{{url_for('analyse_competences', id=8)}}">3.2 Développer des documents multimedia</a>
+						<a class="dropdown-item" href="{{url_for('analyse_competences', id=9)}}">3.3 Adapter les documents à leur finalité</a>
+						<a class="dropdown-item" href="{{url_for('analyse_competences', id=10)}}">3.4 Programmer</a>
+						<a class="dropdown-item" href="{{url_for('analyse_competences', id=11)}}">4.1 Sécuriser l'environnement numérique</a>
+						<a class="dropdown-item" href="{{url_for('analyse_competences', id=12)}}">4.2 Protéger les données personnelles et la vie privée</a>
+						<a class="dropdown-item" href="{{url_for('analyse_competences', id=13)}}">4.3 Protéger la santé le bien-être et l'environnement</a>
+						<a class="dropdown-item" href="{{url_for('analyse_competences', id=14)}}">5.1 Résoudre des problèmes techniques</a>
+						<a class="dropdown-item" href="{{url_for('analyse_competences', id=15)}}">5.2 Construire un environnement numérique</a>
+						<div class="dropdown-divider"></div>
+            			<a class="dropdown-item" href="{{url_for('methodologie')}}">Méthodologie</a>
+					</div>
+        		</li>
+				<li class="ml-auto">
+					<a class="navbar-brand ml-auto" href="{{url_for('index')}}">
+						<img src="static/images/TB_small.png" alt="Logo" style="width:34px;height:34px">
+					</a>
+				</li>
+			</ul>
+        </nav>
+        <main role="main">
+
+            {% block content %}
+			<!--- contenu --->
+            {% endblock %}
+
+        </main>
+
+        <footer class="footer text-center text-white bg-dark text-small">
+			<div class="container">
+                <p class="no-margin">Site web conçu avec Flask par Théophile Baranger et Louis Marre dans le cadre du cours de programmation de L2 CMI ISI 2019.</p>
+			</div>
+        </footer>
+	</body>
+</html>

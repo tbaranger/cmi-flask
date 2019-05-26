@@ -1,0 +1,33 @@
+{% extends "structure.html" %}
+
+		{% block content %}
+        <div id="top" class="container bg-light rounded" style="padding-top:10px; padding-bottom: 10px;
+        padding-left:20px; padding-right:20px; margin-top:70px; margin-bottom:20px">
+            <h1 class="text-center page-title"> Les Personnages dans <em>Les Misérables</em></h1>
+            {% if areConnected %}
+
+			<h3 class="d-flex text-center cookie"><img src="/static/images/cartoon_cookie_small.png" alt="Icône cookie" width="35" height="35" />
+                  Bravo ! Vous avez gagné un cookie virtuel !
+                  <img src="/static/images/cartoon_cookie_small.png" alt="Icône cookie" width="35" height="35" /></h3>
+            <p class="first-paragraph"><br>En effet, <b>{{charA}}</b> et <b>{{charB}}</b>
+                sont bien connecté(e)s dans <em>Les Misérables</em>.</p>
+            <p>Tentez de gagner un autre cookie en essayant un nouveau couple de personnages grâce au
+                <a href="{{url_for('hello')}}">formulaire super génial 2.0</a> !</p>
+
+            {% else %}
+
+			<h3 class="d-flex text-center sad-face"><img src="/static/images/sad_face.png" alt="Icône smiley triste" width="35" height="35" />
+                 Raté !
+                <img src="/static/images/sad_face.png" alt="Icône smiley triste" width="35" height="35" /></h3>
+            <p class="first-paragraph">Pas de cookie pour vous, <b>{{charA}}</b> et <b>{{charB}}</b>
+                ne se rencontrent pas dans <em>Les Misérables</em>!</p>
+            <p>Retentez votre chance avec un autre couple de personnages avec le
+                <a href="{{url_for('hello')}}">formulaire super génial 2.0</a>.
+
+            {% endif %}
+
+			<p><font size="-1">(Si vous êtes à court d'idées, voici la
+				<a href="{{url_for('les_miserables')}}">liste des personnages</a>.)</font></p>
+
+		</div>
+		{% endblock %}

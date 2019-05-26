@@ -1,0 +1,40 @@
+{% extends "structure.html" %}
+
+		{% block content %}
+        <div class="container-fluid bg-light text-dark pt-4 pb-2 mt-5 mb-5">
+            <h1 class="text-center display-4 page-title">Projet Programmation CMI ISI L2</h1>
+            <br><p class="first-paragraph text-center">Vous trouverez les différentes sections du projet ci-dessous.</p>
+            <hr class="my-4">
+            <br><p class="text-center"><b>Théophile Baranger & Louis Marre</b></p><br>
+        </div>
+        <div class="container text-center text-white">
+            <div class="row pb-4">
+                <div class="d-flex align-items-center flex-column col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                    <h2 class="mt-1"><b>Les Misérables</b></h2>
+                    <p class="text-small mt-4">Cette section correspond à l'activité<br />
+                        "Premiers&nbsp;pas avec&nbsp;Flask".</p>
+                    <img class="border img-fluid mt-auto mb-3" src="static/images/hugo.jpg" alt="Victor Hugo"
+                        width="140" height="200">
+                    <p class="mt-auto"><a class="btn btn-light text-dark border" href="{{url_for('hello')}}"
+                        role="button">Visiter</a></p>
+                </div>
+                <div class="d-flex align-items-center flex-column col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                    <h2><b>Recherche dichotomique</b></h2>
+                    <p class="text-small mt-auto">Cette section correspond à l'activité
+                        "Prise&nbsp;en&nbsp;main&nbsp;Flask".</p>
+                    <img class="border rounded-circle img-fluid mt-auto mb-3" src="static/images/100.jpeg" alt="Nombre 100"
+                        width="285" height="200">
+                    <p class="mt-auto"><a class="btn btn-light text-dark border" href="{{url_for('recherche_dichotomique')}}"
+                        role="button">Essayez !</a></p>
+                </div>
+                <div class="d-flex align-items-center flex-column col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                    <h2 class="mt-2 mb-4"><b>Analyse PIX</b></h2>
+                    <p class="text-small mt-auto">Cette section correspond à l'analyse d'un ensemble de données correspondant aux certifications PIX d'étudiants de Licence 1.</p>
+                    <img class="border rounded img-fluid mt-auto mb-3" src="static/images/chart_gray.jpeg" alt="Graphique"
+                        width="180" height="180">
+                    <p class="mt-auto"><a class="btn btn-light text-dark border" href="{{url_for('analyse_globale')}}"
+                        role="button">Visiter</a></p>
+                </div>
+            </div>
+        </div>
+		{% endblock %}

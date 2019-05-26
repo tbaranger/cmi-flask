@@ -1,0 +1,80 @@
+.bg-light-blue {
+  background-color: #88aaff !important;
+}
+
+p.first-paragraph::first-letter{
+    font-size: 120%;
+    font-weight:bold;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+.footer {
+    font-size:small;
+    position: absolute;
+    bottom: 0;
+    padding-top:10px;
+    padding-bottom:10px;
+    width: 100%;
+    height: 60px;
+    line-height:15px;
+}
+
+.no-margin{
+    margin:0px;
+}
+
+.page-title::before{
+    margin:20px;
+    display:block;
+    background-color:#000;
+    width:auto;
+    height:2px;
+    content:'';
+}
+
+.page-title::after{
+    margin:20px;
+    margin-bottom:30px;
+    display:block;
+    background-color:#000;
+    width:auto;
+    height:2px;
+    content:'';
+}
+
+.container, section{
+	padding-top:60px;
+	margin-top:-60px;
+}
+
+figure{
+border:2px dotted grey;
+border-radius:10px;
+background-color:white;
+padding:30px;
+width:100%;
+}
+
+/*
+source : https://www.w3schools.com/howto/howto_js_scroll_to_top.asp
+*/
+
+#myBtn {
+  display: none;
+  position:fixed;
+  bottom:60px;
+  right:5px;
+  z-index:99;
+  border: none; /* Remove borders */
+  background-color:transparent;
+  cursor: pointer;
+  padding-top:2px;
+}
